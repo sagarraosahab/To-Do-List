@@ -32,7 +32,7 @@ function App() {
       <form onSubmit={submitTodo}>
         <input type="text" name='todo' placeholder='Enter your To-Do' />
         <button type="submit">SAVE</button>
-      </form>clear
+      </form>
       <div className='outerDiv'>
         <ul>
           {todoList.map((todo, index) => (
