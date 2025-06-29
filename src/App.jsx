@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { FaEdit, FaTrash } from 'react-icons/fa';  // Edit aur Delete icons
 import './App.css';
 
 function App() {
@@ -26,6 +27,12 @@ function App() {
     setTodoList(newTodos);
   };
 
+  const updateTodo = (index, newValue) => {
+    const newTodos = [...todoList];
+    newTodos[index] = newValue;
+    setTodoList(newTodos);
+  };
+
   return (
     <div className='container'>
       <h1>To - Do - List</h1>
@@ -36,7 +43,13 @@ function App() {
       <div className='outerDiv'>
         <ul>
           {todoList.map((todo, index) => (
-            <TodoList key={index} todo={todo} onDelete={() => removeTodo(index)} />
+            <TodoList 
+              key={index} 
+              index={index}
+              todo={todo} 
+              onDelete={() => removeTodo(index)} 
+              onUpdate={updateTodo}
+            />
           ))}
         </ul>
       </div>
@@ -44,12 +57,51 @@ function App() {
   );
 }
 
-export default App;
+function TodoList({ todo, onDelete, onUpdate, index }) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [editValue, setEditValue] = useState(todo);
 
-function TodoList({ todo, onDelete }) {
+  const handleSave = () => {
+    if(editValue.trim() === "") {
+      alert("Todo can't be empty");
+      return;
+    }
+    onUpdate(index, editValue);
+    setIsEditing(false);
+  };
+
   return (
-    <li>
-      {todo} <span onClick={onDelete}> Delete </span>
+    <li className="todo-item">
+      {isEditing ? (
+        <>
+          <input 
+            type="text" 
+            value={editValue} 
+            onChange={(e) => setEditValue(e.target.value)} 
+            className="edit-input"
+          />
+          <button onClick={handleSave} className="save-btn">Save</button>
+          <button onClick={() => { setIsEditing(false); setEditValue(todo); }} className="cancel-btn">Cancel</button>
+        </>
+      ) : (
+        <>
+          <span>{todo}</span>
+          <div className="icons-wrapper">
+            <FaEdit 
+              className="icon edit-icon" 
+              onClick={() => setIsEditing(true)} 
+              title="Edit"
+            />
+            <FaTrash 
+              className="icon delete-icon" 
+              onClick={onDelete} 
+              title="Delete"
+            />
+          </div>
+        </>
+      )}
     </li>
   );
 }
+
+export default App;
